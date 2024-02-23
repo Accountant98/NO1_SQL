@@ -3,6 +3,8 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, updat
 from sqlalchemy.orm import sessionmaker, aliased, declarative_base
 import streamlit as st
 import numpy as np
+import decouple
+
 # from create_cadics import create_cadics
 
 Base = declarative_base()
@@ -46,9 +48,21 @@ class MainTable(Base):
     note_1 = Column(String)
     note_2 = Column(String)
 
-
+def connect_db():
+    database_url = decouple.config('DATABASE_URL')
+    database_username = decouple.config('DATABASE_USERNAME')
+    database_password = decouple.config('DATABASE_PASSWORD')
+    database_name = decouple.config('DATABASE_NAME')
+    connection = mysql.connector.connect(
+        host=database_url,
+        user=database_username,
+        password=database_password,
+        database=database_name
+    )
+    return connection
 def query_data(project_name, market, powertrain, develop_case, group, lot):
-    engine =create_engine("mysql+mysqlconnector://test_user_1:Sql123456@10.192.85.133/db_21xe_clone")
+    #engine =create_engine("mysql+mysqlconnector://test_user_1:Sql123456@10.192.85.133/db_21xe_clone")
+    engine=connect_db()
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -197,7 +211,8 @@ def update_edit(data_edit, session, result_df_matched, id_project, id_app_list):
         session.close()
 
 def update_new(project_name, market, power_train, develop_case, df):
-    engine = create_engine("mysql+mysqlconnector://test_user_1:Sql123456@10.192.85.133/db_21xe_clone")
+    #engine = create_engine("mysql+mysqlconnector://test_user_1:Sql123456@10.192.85.133/db_21xe_clone")
+    engine=connect_db()
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()

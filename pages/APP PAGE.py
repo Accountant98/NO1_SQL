@@ -8,17 +8,24 @@ st.set_page_config(
     layout="wide"  
 )
 
-try :
+if 1==2:
+    try :
+        if st.session_state.position=="admin": #st.session_state.mail:
+        #------------MAIN APP-----------x
+            try:
+                admin()
+            except Exception as e:
+                st.error(f"Error: {e}")
+        elif st.session_state.position=="staff" :
+            try:
+                user_read_only()
+            except Exception as e:
+                st.error(f"Error: {e}")
+    except:
+        st.warning("Please login before running app!!!")
+else:
     if st.session_state.position=="admin": #st.session_state.mail:
-    #------------MAIN APP-----------x
-        try:
-            admin()
-        except Exception as e:
-            st.error(f"Error: {e}")
-    elif st.session_state.position=="staff" : 
-        try:
-            user_read_only()
-        except Exception as e:
-            st.error(f"Error: {e}")
-except:
-    st.warning("Please login before running app!!!")
+        #------------MAIN APP-----------x
+        admin()
+    elif st.session_state.position=="staff" :
+         user_read_only()
