@@ -14,6 +14,7 @@ from check_zone import condition_zone_check
 from check_option import check_option
 from log_file_error import check_document
 from funtion_database import update_new
+from read_data_view import frame_empty
 
 def create_cadics(case, market, powertrain, car):
     working = os.path.dirname(__file__)
@@ -26,7 +27,7 @@ def create_cadics(case, market, powertrain, car):
         os.mkdir(folder_out_check)
     file_spec,dic_group_karenhyo12=get_group_karenhyo12(folder_data,car)
     if file_spec==None or len(dic_group_karenhyo12)==0:
-        return "Check input again!!!",None,None,None,None
+        return "Check input again!!!",None,frame_empty(),None,None
     # ===========================set link output=============================
     #link_cadic = folder_out_check+"/"+ "CADICS_ALL.csv"
 
