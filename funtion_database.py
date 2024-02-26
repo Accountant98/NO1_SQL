@@ -4,11 +4,8 @@ from sqlalchemy.orm import sessionmaker, aliased, declarative_base
 import streamlit as st
 import numpy as np
 import decouple
-
 # from create_cadics import create_cadics
-
 Base = declarative_base()
-
 class Header(Base):
     __tablename__ = 'header'
     id = Column(Integer, primary_key=True)
@@ -53,13 +50,9 @@ def connect_db():
     database_username = decouple.config('DATABASE_USERNAME')
     database_password = decouple.config('DATABASE_PASSWORD')
     database_name = decouple.config('DATABASE_NAME')
-    connection = mysql.connector.connect(
-        host=database_url,
-        user=database_username,
-        password=database_password,
-        database=database_name
-    )
-    return connection
+    str_connect="mysql+mysqlconnector://"+database_username+":"+ database_password+"@"+database_url +"/"+database_name
+    engine=create_engine(str_connect)
+    return engine
 def query_data(project_name, market, powertrain, develop_case, group, lot):
     #engine =create_engine("mysql+mysqlconnector://test_user_1:Sql123456@10.192.85.133/db_21xe_clone")
     engine=connect_db()
