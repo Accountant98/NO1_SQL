@@ -18,7 +18,7 @@ from read_data_view import zip_folder
 def create_doc(case,plant,powertrain,car):
 #===========================load_infomation_input==========================
     working = os.path.dirname(__file__)
-    folder_name=car+"_"+powertrain+"_"+plant+"_"+case
+    folder_name=str(car).upper()+"_"+powertrain+"_"+plant+"_"+case
     folder_data=os.path.join(working, "data", str(car).upper())
     folder_data=folder_data.replace("\\","/")
     folder_out=os.path.join(working, "output", folder_name)
