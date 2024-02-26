@@ -87,94 +87,69 @@ def write_excel(folder_out,my_dict_car_request,frame_data_car,my_dict_request_li
     src_form=os.path.join(working, "form_out","Step2")
     src_form=src_form.replace("\\","/")
     shutil.copytree(src_form, folder_out,dirs_exist_ok=True)
-
     link_file_car_request=folder_out+"/Car配車要望表.xlsx"
     link_file_request_list=folder_out+"/WTC要望集約兼チェックリスト.xlsx"
     link_file_wtc_spec=folder_out+"/WTC仕様用途一覧表.xlsx"
     link_buhin=folder_out+"/実験部品.xlsx"
     link_buhin_list=folder_out+"/特性管理部品リスト.xlsx"
-
-    app = xw.App(visible=False)
-    wb = app.books.open(link_file_car_request)
     form_car_request= [{i: None for i in range(0, 60)}]
-    for lot in my_dict_car_request.keys():
-        if len(my_dict_car_request[lot])>0:
-            ws = wb.sheets[lot]
-            ws.range('F6').options(index=False,header=None).value = frame_data_car
-            list_dict=form_car_request+my_dict_car_request[lot]
-            frame_data=pd.DataFrame(list_dict)
-            frame_data=frame_data.drop(0)
-            ws.range('A20').options(index=False,header=None).value = frame_data
-    wb.save(link_file_car_request)
-    wb.close()
-
-
-    dict_address={'関連表1_b(操安台上)_xq2.xlsx': 'D7', '関連表1_b(車体音振_車両音振)_xq4x.xlsx': 'D8', '関連表1_a(内外装耐環境)_xr2.xlsx': 'D9',
-                '関連表1_a(コントロール)_xr2.xlsx': 'D12', '関連表1_l(車体信頼性)_xr2_.xlsx': 'D15', '関連表1_z(シャシー)_xr2.xlsx': 'D17',
-                '関連表1_m(衝突)_xtf.xlsx': 'D18', '関連表1_a(シート)_xr3.xlsx': 'D22', '関連表1_(シート)_xl4.xlsx': 'D23',
-                '関連表1_m(シートベルト)_xr6.xlsx': 'D25', '関連表1_m(乗員判別)_xr6.xlsx': 'D28', '関連表1_k(電池システムx)_xp6.xlsx': 'D33'}
-    wb = app.books.open(link_file_request_list)
-    for lot in my_dict_request_list.keys():
-        end_row=34
-        ws = wb.sheets[lot]
-        for item in my_dict_request_list[lot]:
-            KCA_id=str(item[0])
-            file_name=KCA_id[:KCA_id.find(".xlsx")+5]
-            try:
-                cell=dict_address[file_name]
-            except:
-                cell="D"+str(end_row)
-                end_row=end_row+1
-            frame_data=pd.DataFrame([item])
-            ws.range(cell).options(index=False,header=None).value = frame_data
-    wb.save(link_file_request_list)
-    wb.close()
-
-    wb = app.books.open(link_file_wtc_spec)
+    with pd.ExcelWriter(link_file_car_request, engine='openpyxl', mode="a",if_sheet_exists="overlay") as writer:
+        for lot in my_dict_car_request.keys():
+            if len(my_dict_car_request[lot])>0:
+                list_dict=form_car_request+my_dict_car_request[lot]
+                frame_data=pd.DataFrame(list_dict)
+                frame_data=frame_data.drop(0)
+                frame_data_car.to_excel(writer, sheet_name=lot, index=None, header=None, startcol=5, startrow=5)
+                frame_data.to_excel(writer, sheet_name=lot, index=None, header=None, startcol=0, startrow=19)
+    dict_address={'関連表1_b(操安台上)_xq2.xlsx': 6, '関連表1_b(車体音振_車両音振)_xq4x.xlsx': 7, '関連表1_a(内外装耐環境)_xr2.xlsx': 8,
+                '関連表1_a(コントロール)_xr2.xlsx': 11, '関連表1_l(車体信頼性)_xr2_.xlsx': 14, '関連表1_z(シャシー)_xr2.xlsx': 16,
+                '関連表1_m(衝突)_xtf.xlsx': 17, '関連表1_a(シート)_xr3.xlsx': 21, '関連表1_(シート)_xl4.xlsx': 22,
+                '関連表1_m(シートベルト)_xr6.xlsx': 24, '関連表1_m(乗員判別)_xr6.xlsx': 27, '関連表1_k(電池システムx)_xp6.xlsx': 32}
+    with pd.ExcelWriter(link_file_request_list, engine='openpyxl', mode="a",if_sheet_exists="overlay") as writer:
+        for lot in my_dict_request_list.keys():
+            end_row=34
+            for item in my_dict_request_list[lot]:
+                KCA_id=str(item[0])
+                file_name=KCA_id[:KCA_id.find(".xlsx")+5]
+                try:
+                    row=dict_address[file_name]
+                except:
+                    row=end_row
+                    end_row=end_row+1
+                frame_data=pd.DataFrame([item])
+                frame_data.to_excel(writer, sheet_name=lot, index=None, header=None, startcol=3, startrow=row)
     form_wtc_spec=[{i: None for i in range(0, 89)}]
-    for lot in my_dict_wtc_spec.keys():
-        ws = wb.sheets[lot]
-        if len(my_dict_wtc_spec[lot]["t"])>0:
-            list_dict_t=form_wtc_spec+my_dict_wtc_spec[lot]["t"]
-            frame_t=pd.DataFrame(list_dict_t)
-            frame_t=frame_t.drop(0)
-            ws.range('G47').options(index=False,header=None).value = frame_t
-            
-        if len(my_dict_wtc_spec[lot]["w"])>0:
-            list_dict_w=form_wtc_spec+my_dict_wtc_spec[lot]["w"]
-            frame_w=pd.DataFrame(list_dict_w)
-            frame_w=frame_w.drop(0)
-            ws.range('G68').options(index=False,header=None).value = frame_w
-
-        if len(my_dict_wtc_spec[lot]["c"])>0:
-            list_dict_c=form_wtc_spec+my_dict_wtc_spec[lot]["c"]
-            frame_c=pd.DataFrame(list_dict_c)
-            frame_c=frame_c.drop(0)
-            ws.range('G88').options(index=False,header=None).value = frame_c
-    wb.save(link_file_wtc_spec)
-    wb.close()
-
-    wb = app.books.open(link_buhin)
+    with pd.ExcelWriter(link_file_wtc_spec, engine='openpyxl', mode="a",if_sheet_exists="overlay") as writer:
+        for lot in my_dict_wtc_spec.keys():
+            if len(my_dict_wtc_spec[lot]["t"])>0:
+                list_dict_t=form_wtc_spec+my_dict_wtc_spec[lot]["t"]
+                frame_t=pd.DataFrame(list_dict_t)
+                frame_t=frame_t.drop(0)
+                frame_t.to_excel(writer, sheet_name=lot, index=None, header=None, startcol=6, startrow=46)
+            if len(my_dict_wtc_spec[lot]["w"])>0:
+                list_dict_w=form_wtc_spec+my_dict_wtc_spec[lot]["w"]
+                frame_w=pd.DataFrame(list_dict_w)
+                frame_w=frame_w.drop(0)
+                frame_w.to_excel(writer, sheet_name=lot, index=None, header=None, startcol=6, startrow=67)
+            if len(my_dict_wtc_spec[lot]["c"])>0:
+                list_dict_c=form_wtc_spec+my_dict_wtc_spec[lot]["c"]
+                frame_c=pd.DataFrame(list_dict_c)
+                frame_c=frame_c.drop(0)
+                frame_c.to_excel(writer, sheet_name=lot, index=None, header=None, startcol=6, startrow=87)
     form_buhin=[{i: None for i in range(0, 22)}]
-    for lot in my_dic_buhin.keys():
-        if len(my_dic_buhin[lot])>0:
-            list_dict=form_buhin+my_dic_buhin[lot]
-            frame_data=pd.DataFrame(list_dict)
-            frame_data=frame_data.drop(0)
-            ws=wb.sheets[lot]
-            ws.range('C8').options(index=False,header=None).value = frame_data
-    wb.save(link_buhin)
-    wb.close()
-
-    wb = app.books.open(link_buhin_list)
-    for lot in my_dic_buhin_list.keys():
-        if len(my_dic_buhin_list[lot])>0:
-            ws=wb.sheets[lot]
-            frame_data=pd.DataFrame(my_dic_buhin_list[lot])
-            ws.range('C31').options(index=False,header=None).value = frame_data
-    wb.save(link_buhin_list)
-    wb.close()
-    app.quit()
+    with pd.ExcelWriter(link_buhin, engine='openpyxl', mode="a",if_sheet_exists="overlay") as writer:
+        for lot in my_dic_buhin.keys():
+            if len(my_dic_buhin[lot])>0:
+                list_dict=form_buhin+my_dic_buhin[lot]
+                frame_data=pd.DataFrame(list_dict)
+                frame_data=frame_data.drop(0)
+                frame_data.to_excel(writer, sheet_name=lot, index=None, header=None, startcol=2, startrow=7)
+    with pd.ExcelWriter(link_buhin_list, engine='openpyxl', mode="a",if_sheet_exists="overlay") as writer:
+        for lot in my_dic_buhin_list.keys():
+            if len(my_dic_buhin_list[lot])>0:
+                frame_data=pd.DataFrame(my_dic_buhin_list[lot])
+                frame_data.to_excel(writer, sheet_name=lot, index=None, header=None, startcol=2, startrow=30)
+    
 
 def find_table(frame_karen3,powertrain):
     max_col=len(frame_karen3.columns)
