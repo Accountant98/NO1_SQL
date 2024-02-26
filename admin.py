@@ -55,7 +55,7 @@ def admin():
                 
             if col_left_spec_grid.form_submit_button("Create Cadics", use_container_width=True)==True and get_data("running")==0 :
                 set_data("running",1) 
-                st.write(st.session_state.case,st.session_state.plant,st.session_state.pwt,st.session_state.code)
+                #st.write(st.session_state.case,st.session_state.plant,st.session_state.pwt,st.session_state.code)
                 notice,session, data, project_id, app_list=create_cadics(st.session_state.case,st.session_state.plant,st.session_state.pwt,st.session_state.code)
                 
                 #notice,session, data, project_id, app_list=[None,None,None,None,None]
