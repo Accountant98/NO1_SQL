@@ -78,7 +78,7 @@ def view(user):
                             set_data("data_cadics",data_edit)
                             st.write("Save Completed!!!")
                 else:
-                    button_select_caout_grid.dataframe(data,height=525)
+                    button_select_caout_grid.dataframe(get_data("data_cadics"),height=525)
 
             set_data("link", "cadics")
 
