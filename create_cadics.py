@@ -634,6 +634,8 @@ def normalize_japanese_text(input_text):
 
 def get_group_karenhyo12(folder_data,car):
     dic_group_karenhyo12={}
+    if os.path.exists(folder_data)==False:
+        return None, dic_group_karenhyo12
     files = [f for f in os.listdir(folder_data) if os.path.isfile(os.path.join(folder_data, f))]
     file_name_spec="仕様表_"+str(car).upper()+".xlsx"
     link_file_spec=os.path.join(folder_data,file_name_spec)
